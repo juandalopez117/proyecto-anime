@@ -51,10 +51,20 @@ const getAnimeByName = async (name) => {
     let result = await axios
       .get(`https://api.jikan.moe/v4/anime?q=${name}&sfw`)
       .then((res) => res.data.data);
-    let Scores = [];
-    await result.forEach(async (el) => Scores.push(el.score));
 
-    return Scores;
+    let animeByName = result.map((el, index) => {
+      return {
+        id: index,
+        name: el.titles[0].title,
+        description: el.synopsis,
+        episodes: el.episodes,
+        status: el.status,
+        image: el.images.jpg.large_image_url,
+        score: el.score,
+        rank: el.rank,
+      };
+    });
+    return animeByName;
   } catch (error) {
     console.log(error.message);
   }

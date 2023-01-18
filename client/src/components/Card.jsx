@@ -72,7 +72,7 @@ export default function AnimeReviewCard({
   score,
   comment,
 }) {
-  const dispatch = useDispatch();
+
 
   const [open, setOpen] = React.useState(false);
 

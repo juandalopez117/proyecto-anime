@@ -1,6 +1,7 @@
 const initialState = {
   allAnimes: [],
   animesByName: [],
+  comments: [],
 };
 
 function rootReducer(state = initialState, action) {
@@ -14,6 +15,12 @@ function rootReducer(state = initialState, action) {
       return {
         ...state,
         animesByName: action.payload,
+      };
+
+    case "GET_COMMENTS":
+      return {
+        ...state,
+        comments: action.payload,
       };
     default:
       return state;

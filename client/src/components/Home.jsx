@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getAllAnime } from "../redux/actions";
+import { getAllAnime, getComments } from "../redux/actions";
 import { Box, Grid, Typography } from "@mui/material";
 import AnimeReviewCard from "./Card";
 import Carousel from "react-material-ui-carousel";
 import SearchAppBar from "./NavBar";
 import { useSelector } from "react-redux";
 import { getAnimeByName } from "../redux/actions";
+import Footer from "./footer";
+import validate from "./ValidateRank";
 
 const Home = () => {
   let animes = useSelector((state) => state.allAnimes);
   const [animes2, setAnimes2] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllAnime());
+    dispatch(getComments()).then((data) => setComments(data.payload));
     setLoading(false);
   }, [dispatch]);
 
@@ -23,14 +27,15 @@ const Home = () => {
     e.preventDefault();
     if (!search) {
       setAnimes2([]);
+    } else {
+      dispatch(getAnimeByName(search)).then((data) => {
+        setAnimes2(data.payload);
+      });
     }
-    dispatch(getAnimeByName(search)).then((data) => {
-      setAnimes2(data.payload);
-    });
   };
 
   return (
-    <Box sx={{ bgcolor: " #3e3e3e" }}>
+    <Box sx={{}}>
       <SearchAppBar handleClick={handleClick} />
 
       <Box
@@ -38,16 +43,23 @@ const Home = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: " #3e3e3e",
+          minHeight: "80vh",
+          bgcolor: " #001850",
         }}
       >
         {" "}
         {loading === false &&
-          (animes2.length > 0 ? (
+          (animes2.length > 0 && Comment.length > 0 ? (
             <Carousel
-              sx={{ width: " 100%", bgcolor: " #3e3e3e" }}
+              sx={{
+                width: "100%",
+                height: "60vh",
+                translate: "0 -10vh",
+                zIndex: 1,
+                overflow: "hidden",
+              }}
               autoPlay={false}
-              indicators={false}
+              indicators={true}
               next={(next, active) =>
                 console.log(`we left ${active}, and are now at ${next}`)
               }
@@ -61,20 +73,12 @@ const Home = () => {
                     sx={{
                       display: "flex",
                       justifyContent: "center",
+                      zIndex: "-1",
                       alignItems: "center",
+                      position: "relative",
                     }}
                   >
-                    <Grid
-                      container
-                      spacing={3}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "2%",
-                        bgcolor: "3e3e3e",
-                      }}
-                    >
+                    <Grid container spacing={3}>
                       <Grid item>
                         <AnimeReviewCard
                           name={animes2[index % animes2.length].name}
@@ -84,6 +88,13 @@ const Home = () => {
                           }
                           rank={animes2[index % animes2.length].rank}
                           episodes={animes2[index % animes2.length].episodes}
+                          year={animes2[index % animes.length].year}
+                          score={animes2[index % animes.length].score}
+                          comment={
+                            comments[
+                              validate(animes2[index % animes.length].score)
+                            ].description
+                          }
                         />
                       </Grid>
 
@@ -98,6 +109,15 @@ const Home = () => {
                           episodes={
                             animes2[(index + 1) % animes2.length].episodes
                           }
+                          year={animes2[(index + 1) % animes.length].year}
+                          score={animes2[(index + 1) % animes.length].score}
+                          comment={
+                            comments[
+                              validate(
+                                animes2[(index + 1) % animes.length].score
+                              )
+                            ].description
+                          }
                         />
                       </Grid>
                       <Grid item>
@@ -110,6 +130,15 @@ const Home = () => {
                           rank={animes2[(index + 2) % animes2.length].rank}
                           episodes={
                             animes2[(index + 2) % animes2.length].episodes
+                          }
+                          year={animes2[(index + 2) % animes.length].year}
+                          score={animes2[(index + 2) % animes.length].score}
+                          comment={
+                            comments[
+                              validate(
+                                animes2[(index + 2) % animes.length].score
+                              )
+                            ].description
                           }
                         />
                       </Grid>
@@ -125,6 +154,15 @@ const Home = () => {
                           episodes={
                             animes2[(index + 3) % animes2.length].episodes
                           }
+                          year={animes2[(index + 3) % animes.length].year}
+                          score={animes2[(index + 3) % animes.length].score}
+                          comment={
+                            comments[
+                              validate(
+                                animes2[(index + 3) % animes.length].score
+                              )
+                            ].description
+                          }
                         />
                       </Grid>
 
@@ -139,6 +177,15 @@ const Home = () => {
                           episodes={
                             animes2[(index + 4) % animes2.length].episodes
                           }
+                          year={animes2[(index + 4) % animes.length].year}
+                          score={animes2[(index + 4) % animes.length].score}
+                          comment={
+                            comments[
+                              validate(
+                                animes2[(index + 4) % animes.length].score
+                              )
+                            ].description
+                          }
                         />
                       </Grid>
                     </Grid>
@@ -147,9 +194,18 @@ const Home = () => {
               })}
             </Carousel>
           ) : (
-            animes.length > 0 && (
+            animes.length > 0 &&
+            loading === false && (
               <Carousel
-                sx={{ width: " 100%", bgcolor: " #3e3e3e" }}
+                xs={12}
+                sm={6}
+                sx={{
+                  width: "100%",
+                  height: "65vh",
+                  translate: "0 -6vh",
+                  zIndex: 1,
+                  overflow: "hidden",
+                }}
                 autoPlay={false}
                 indicators={false}
                 next={(next, active) =>
@@ -176,74 +232,127 @@ const Home = () => {
                           alignItems: "center",
                           justifyContent: "center",
                           padding: "2%",
-                          bgcolor: "3e3e3e",
                         }}
                       >
                         <Grid item>
-                          <AnimeReviewCard
-                            name={animes[index % animes.length].name}
-                            image={animes[index % animes.length].image}
-                            description={
-                              animes[index % animes.length].description
-                            }
-                            rank={animes[index % animes.length].rank}
-                            episodes={animes[index % animes.length].episodes}
-                          />
+                          <Box sx={{}}>
+                            <AnimeReviewCard
+                              name={animes[index % animes.length].name}
+                              image={animes[index % animes.length].image}
+                              description={
+                                animes[index % animes.length].description
+                              }
+                              rank={animes[index % animes.length].rank}
+                              episodes={animes[index % animes.length].episodes}
+                              year={animes[index % animes.length].year}
+                              score={animes[index % animes.length].score}
+                              comment={
+                                comments[
+                                  validate(animes[index % animes.length].score)
+                                ].description
+                              }
+                            />
+                          </Box>
                         </Grid>
 
                         <Grid item>
-                          <AnimeReviewCard
-                            name={animes[(index + 1) % animes.length].name}
-                            image={animes[(index + 1) % animes.length].image}
-                            description={
-                              animes[(index + 1) % animes.length].description
-                            }
-                            rank={animes[(index + 1) % animes.length].rank}
-                            episodes={
-                              animes[(index + 1) % animes.length].episodes
-                            }
-                          />
-                        </Grid>
-                        <Grid item>
-                          <AnimeReviewCard
-                            name={animes[(index + 2) % animes.length].name}
-                            image={animes[(index + 2) % animes.length].image}
-                            description={
-                              animes[(index + 2) % animes.length].description
-                            }
-                            rank={animes[(index + 2) % animes.length].rank}
-                            episodes={
-                              animes[(index + 2) % animes.length].episodes
-                            }
-                          />
+                          <Box sx={{}}>
+                            <AnimeReviewCard
+                              name={animes[(index + 1) % animes.length].name}
+                              image={animes[(index + 1) % animes.length].image}
+                              description={
+                                animes[(index + 1) % animes.length].description
+                              }
+                              rank={animes[(index + 1) % animes.length].rank}
+                              episodes={
+                                animes[(index + 1) % animes.length].episodes
+                              }
+                              year={animes[(index + 1) % animes.length].year}
+                              score={animes[(index + 1) % animes.length].score}
+                              comment={
+                                comments[
+                                  validate(
+                                    animes[(index + 1) % animes.length].score
+                                  )
+                                ].description
+                              }
+                            />
+                          </Box>
                         </Grid>
 
                         <Grid item>
-                          <AnimeReviewCard
-                            name={animes[(index + 3) % animes.length].name}
-                            image={animes[(index + 3) % animes.length].image}
-                            description={
-                              animes[(index + 3) % animes.length].description
-                            }
-                            rank={animes[(index + 3) % animes.length].rank}
-                            episodes={
-                              animes[(index + 3) % animes.length].episodes
-                            }
-                          />
+                          <Box sx={{}}>
+                            <AnimeReviewCard
+                              name={animes[(index + 2) % animes.length].name}
+                              image={animes[(index + 2) % animes.length].image}
+                              description={
+                                animes[(index + 2) % animes.length].description
+                              }
+                              rank={animes[(index + 2) % animes.length].rank}
+                              episodes={
+                                animes[(index + 2) % animes.length].episodes
+                              }
+                              year={animes[(index + 2) % animes.length].year}
+                              score={animes[(index + 2) % animes.length].score}
+                              comment={
+                                comments[
+                                  validate(
+                                    animes[(index + 2) % animes.length].score
+                                  )
+                                ].description
+                              }
+                            />
+                          </Box>
                         </Grid>
 
                         <Grid item>
-                          <AnimeReviewCard
-                            name={animes[(index + 4) % animes.length].name}
-                            image={animes[(index + 4) % animes.length].image}
-                            description={
-                              animes[(index + 4) % animes.length].description
-                            }
-                            rank={animes[(index + 4) % animes.length].rank}
-                            episodes={
-                              animes[(index + 4) % animes.length].episodes
-                            }
-                          />
+                          <Box sx={{}}>
+                            <AnimeReviewCard
+                              name={animes[(index + 3) % animes.length].name}
+                              image={animes[(index + 3) % animes.length].image}
+                              description={
+                                animes[(index + 3) % animes.length].description
+                              }
+                              rank={animes[(index + 3) % animes.length].rank}
+                              episodes={
+                                animes[(index + 3) % animes.length].episodes
+                              }
+                              year={animes[(index + 3) % animes.length].year}
+                              score={animes[(index + 3) % animes.length].score}
+                              comment={
+                                comments[
+                                  validate(
+                                    animes[(index + 3) % animes.length].score
+                                  )
+                                ].description
+                              }
+                            />
+                          </Box>
+                        </Grid>
+
+                        <Grid item>
+                          <Box sx={{ height: "auto" }}>
+                            <AnimeReviewCard
+                              name={animes[(index + 4) % animes.length].name}
+                              image={animes[(index + 4) % animes.length].image}
+                              description={
+                                animes[(index + 4) % animes.length].description
+                              }
+                              rank={animes[(index + 4) % animes.length].rank}
+                              episodes={
+                                animes[(index + 4) % animes.length].episodes
+                              }
+                              year={animes[(index + 4) % animes.length].year}
+                              score={animes[(index + 4) % animes.length].score}
+                              comment={
+                                comments[
+                                  validate(
+                                    animes[(index + 4) % animes.length].score
+                                  )
+                                ].description
+                              }
+                            />
+                          </Box>
                         </Grid>
                       </Grid>
                     </Box>
@@ -253,6 +362,8 @@ const Home = () => {
             )
           ))}
       </Box>
+
+      <Footer sx={{ position: "absolute" }} />
     </Box>
   );
 };

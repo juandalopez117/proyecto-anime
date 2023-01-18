@@ -18,6 +18,7 @@ const getAnimes = async () => {
         image: el.images.jpg.large_image_url,
         score: el.score,
         rank: el.rank,
+        year: el.year,
       };
     });
 

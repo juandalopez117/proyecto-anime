@@ -1,12 +1,13 @@
-import { Paper, Button } from "@mui/material";
+import styled from "styled-components";
 
-export default function Item({ item }) {
-  return (
-    <Paper>
-      <h2>{item.name}</h2>
-      <p>{item.description}</p>
-
-      <Button className="CheckButton">Check it out!</Button>
-    </Paper>
-  );
-}
+export default styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 250px;
+  width: 100%;
+  background-color: #683bb7;
+  color: #fff;
+  margin: 15px;
+  font-size: 4em;
+`;

@@ -19,3 +19,13 @@ export function getAnimeByName(name) {
     });
   };
 }
+
+export function getComments() {
+  return async function (dispatch) {
+    let json = await axios.get(`http://localhost:3001/comments/`);
+    return dispatch({
+      type: "GET_COMMENTS",
+      payload: json.data,
+    });
+  };
+}

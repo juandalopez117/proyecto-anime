@@ -12,6 +12,8 @@ import { Button } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { getAnimeByName } from "../redux/actions";
+import TerminalIcon from "@mui/icons-material/Terminal";
+
 import { useSelector } from "react-redux";
 
 const Search = styled("div")(({ theme }) => ({
@@ -72,7 +74,7 @@ export default function SearchAppBar({ handleClick }) {
             aria-label="open drawer"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <TerminalIcon />
           </IconButton>
           <Typography
             variant="h6"
